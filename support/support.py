@@ -35,7 +35,7 @@ def timing(name: str = '') -> Generator[None, None, None]:
 def _get_cookie_headers() -> dict[str, str]:
     with open(os.path.join(HERE, '../.env')) as f:
         contents = f.read().strip()
-    return {'Cookie': contents, 'User-Agent': 'anthonywritescode, hi eric'}
+    return {'Cookie': contents, 'User-Agent': 'sa-so, hi eric'}
 
 
 def get_input(year: int, day: int) -> str:
@@ -43,6 +43,10 @@ def get_input(year: int, day: int) -> str:
     req = urllib.request.Request(url, headers=_get_cookie_headers())
     return urllib.request.urlopen(req).read().decode()
 
+def get_sol(year: int,day: int)-> str:
+    url = f'https://raw.githubusercontent.com/jonathanpaulson/AdventOfCode/master/{year}/{day}.py'
+    req = urllib.request.Request(url)
+    return urllib.request.urlopen(req).read().decode()
 
 def get_year_day() -> tuple[int, int]:
     cwd = os.getcwd()
@@ -54,6 +58,18 @@ def get_year_day() -> tuple[int, int]:
 
     return int(year_s[len('aoc'):]), int(day_s[len('day'):])
 
+def download_solution():
+    for i in range(5000):
+        try:
+            s = get_sol(year,day)
+        except urlib.error.URLError as e:
+            print(f'yyy: not ready yet: {e}')
+            time.sleep(1)
+        else:
+            break
+     else:
+        raise SystemExit('timed out')
+        
 
 def download_input() -> int:
     parser = argparse.ArgumentParser()
@@ -72,17 +88,17 @@ def download_input() -> int:
     else:
         raise SystemExit('timed out after attempting many times')
 
-    with open('input.txt', 'w') as f:
+    with open(f'{day}.in', 'w') as f:
         f.write(s)
 
-    lines = s.splitlines()
-    if len(lines) > 10:
-        for line in lines[:10]:
-            print(line)
-        print('...')
-    else:
-        print(lines[0][:80])
-        print('...')
+#     lines = s.splitlines()
+#     if len(lines) > 10:
+#         for line in lines[:10]:
+#             print(line)
+#         print('...')
+#     else:
+#         print(lines[0][:80])
+#         print('...')
 
     return 0
 
